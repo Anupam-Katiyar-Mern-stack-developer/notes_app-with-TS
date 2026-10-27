@@ -1,13 +1,18 @@
-
+import NotForm from "@/components/NoteForm";
+import type { Note } from "@/types/note";
 
 export default function Home() {
-  return (
-    <div>
-      <h1>
-        my first mini-notes app
-      </h1>
+  const note: Note = {
+    id: 1,
+    title: "Learn Next.js",
+    content: "Aaj TypeScript interface seekha",
+  };
 
-      npx create-next-app@latest mini-notes
-    </div>
+  return (
+    <main>
+      <h1>Mini Notes App</h1>
+
+      <NotForm />
+    </main>
   );
 }
