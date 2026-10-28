@@ -37,7 +37,7 @@ export async function POST(request: Request) {
                 message: "Note created successfully",
                 note: result.rows[0],
             },
-            { status: 201 }
+            { status: 201 } 
         );
     } catch (error) {
         console.error("Create note error:", error);
