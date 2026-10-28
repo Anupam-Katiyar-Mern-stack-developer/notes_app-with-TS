@@ -9,3 +9,9 @@ export interface NoteResponse {
   notes: Note[];
   message?: string;
 }
+
+export interface CreateNoteResponse {
+  success:boolean;
+  message:string;
+  note?:Note;
+}
