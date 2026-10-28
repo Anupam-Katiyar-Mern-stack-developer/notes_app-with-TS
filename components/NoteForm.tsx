@@ -12,6 +12,8 @@ export default function NoteForm() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,7 +51,7 @@ export default function NoteForm() {
         setLoading(true);
         setError("");
 
-        const response = await fetch("/api/notes");
+        const response = await fetch(`/api/notes?pages=${page}&limit=10`);
         const data: NoteResponse = await response.json();
 
         if (!response.ok) {
@@ -105,7 +107,29 @@ export default function NoteForm() {
             <h2>{note.title}</h2>
             <p>{note.content}</p>
           </article>
+
         ))}
+        <div>
+          <button
+            type="button"
+            disabled={page <= 1}
+            onClick={() => setPage((current) => current - 1)}
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            type="button"
+            disabled={page >= totalPages}
+            onClick={() => setPage((current) => current + 1)}
+          >
+            Next
+          </button>
+        </div>
       </section>
     </div>
   );
