@@ -3,3 +3,9 @@ export interface Note {
   title: string;
   content: string;
 }
+
+export interface NoteResponse {
+  success: boolean;
+  notes: Note[];
+  message?: string;
+}
