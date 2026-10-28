@@ -2,8 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
-import type { Note } from "@/types/note";
+import type { Note, NoteResponse } from "@/types/note"
+
 
 export default function NoteForm() {
   const [title, setTitle] = useState<string>("");
@@ -49,7 +49,7 @@ export default function NoteForm() {
         setError("");
 
         const response = await fetch("/api/notes");
-        const data = await response.json();
+        const data:NoteResponse = await response.json();
 
         if (!response.ok) {
           throw new Error(data.message || "Failed to fetch notes");
