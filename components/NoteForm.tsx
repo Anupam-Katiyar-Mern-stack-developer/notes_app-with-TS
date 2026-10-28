@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Note, NoteResponse } from "@/types/note"
+import type { Note, NoteResponse, CreateNoteResponse } from "@/types/note"
 
 
 export default function NoteForm() {
@@ -25,19 +25,20 @@ export default function NoteForm() {
         content,
       }),
     });
-    const data = await response.json();
+    const data: CreateNoteResponse = await response.json();
 
-    setNotes((previousNotes) => [
-      data.note,
-      ...previousNotes,
-    ]);
+
 
     if (!response.ok) {
       console.error(data.message);
       return;
     }
+    if (!data.note) {
+      throw new Error("Created note was not returned")
+    }
 
-    console.log("Note saved in DB:", data.note)
+    console.log("Note saved in DB:", data.note);
+    setNotes((previousNotes) => [data.note!, ...previousNotes]);
     setTitle("");
     setContent("");
   };
@@ -49,7 +50,7 @@ export default function NoteForm() {
         setError("");
 
         const response = await fetch("/api/notes");
-        const data:NoteResponse = await response.json();
+        const data: NoteResponse = await response.json();
 
         if (!response.ok) {
           throw new Error(data.message || "Failed to fetch notes");
