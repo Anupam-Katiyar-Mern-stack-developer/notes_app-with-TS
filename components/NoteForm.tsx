@@ -51,7 +51,7 @@ export default function NoteForm() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`/api/notes?pages=${page}&limit=10`);
+        const response = await fetch(`/api/notes?pages=${page}&limit=1`);
         const data: NoteResponse = await response.json();
 
         if (!response.ok) {
