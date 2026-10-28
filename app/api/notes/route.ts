@@ -1,12 +1,5 @@
 import { pool } from "@/lib/db";
 
-export async function GET() {
-    return Response.json({
-        success: true,
-        message: "Notes API working",
-    });
-}
-
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -37,7 +30,7 @@ export async function POST(request: Request) {
                 message: "Note created successfully",
                 note: result.rows[0],
             },
-            { status: 201 } 
+            { status: 201 }
         );
     } catch (error) {
         console.error("Create note error:", error);
@@ -46,5 +39,31 @@ export async function POST(request: Request) {
             { success: false, message: "Failed to create note" },
             { status: 500 }
         );
+    }
+}
+
+
+export async function GET() {
+    try {
+        const result = await pool.query(
+            `select id ,title,content,created_at
+             from notes 
+              order by created_at desc`
+        );
+        return Response.json(
+            {
+                success: true,
+                notes: result.rows,
+            },
+            { status: 200 }
+
+        )
+    } catch (error) {
+        console.log("fetch notes error", error);
+        return Response.json(
+            { success: false, message: "Failed to fetch notes" },
+            { status: 500 }
+        )
+
     }
 }

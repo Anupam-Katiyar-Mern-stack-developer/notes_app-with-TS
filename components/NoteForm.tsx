@@ -10,17 +10,26 @@ export default function NoteForm() {
   const [content, setContent] = useState<string>("");
   const [notes, setNotes] = useState<Note[]>([]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const response = await fetch("/api/notes", {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title,
+        content,
+      }),
+    });
+    const data = await response.json();
 
-    const newNote: Note = {
-      id: Date.now(),
-      title,
-      content,
-    };
+    if (!response.ok) {
+      console.error(data.message);
+      return;
+    }
 
-    setNotes((previousNotes) => [...previousNotes, newNote]);
-
+    console.log("Note saved in DB:", data.note)
     setTitle("");
     setContent("");
   };
@@ -52,7 +61,7 @@ export default function NoteForm() {
         <h2>My Notes</h2>
 
         {notes.map((note) => (
-          <article key={note.id} key={note.id}>
+          <article key={note.id} >
             <h3>{note.title}</h3>
             <p>{note.content}</p>
           </article>
