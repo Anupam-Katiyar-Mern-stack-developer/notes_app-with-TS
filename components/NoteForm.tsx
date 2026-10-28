@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Note } from "@/types/note";
 
@@ -9,6 +9,9 @@ export default function NoteForm() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,6 +27,11 @@ export default function NoteForm() {
     });
     const data = await response.json();
 
+    setNotes((previousNotes) => [
+      data.note,
+      ...previousNotes,
+    ]);
+
     if (!response.ok) {
       console.error(data.message);
       return;
@@ -33,6 +41,33 @@ export default function NoteForm() {
     setTitle("");
     setContent("");
   };
+
+  useEffect(() => {
+    async function fetchNotes() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch("/api/notes");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch notes");
+        }
+        setNotes(data.notes || []);
+
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "something went wrong"
+        )
+      } finally {
+        setLoading(false);
+      }
+
+    }
+
+    fetchNotes();
+  }, []);
 
   return (
     <div>
@@ -58,11 +93,15 @@ export default function NoteForm() {
       </form>
 
       <section>
+
+        {loading && <p>Loading notes...</p>}
+        {error && <p>{error}</p>}
+
         <h2>My Notes</h2>
 
-        {notes.map((note) => (
-          <article key={note.id} >
-            <h3>{note.title}</h3>
+        {!loading && !error && notes.map((note) => (
+          <article key={note.id}>
+            <h2>{note.title}</h2>
             <p>{note.content}</p>
           </article>
         ))}
