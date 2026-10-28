@@ -50,7 +50,7 @@ export async function GET(request: Request) {
 
         const pageNumber = Number(searchParams.get("page") ?? 1);
         const limitNumber = Number(searchParams.get("limit") ?? 10);
-
+        const search = searchParams.get("search")?.trim() ?? "";
         if (
             !Number.isInteger(pageNumber) ||
             !Number.isInteger(limitNumber) ||
@@ -69,13 +69,15 @@ export async function GET(request: Request) {
         const result = await pool.query(
             `SELECT id, title, content, created_at
        FROM notes
+       where title ilike $3
        ORDER BY created_at DESC, id DESC
        LIMIT $1 OFFSET $2`,
-            [limitNumber, offset]
+            [limitNumber, offset, `%${search}%`]
         );
 
         const resultCount = await pool.query(
-            `SELECT COUNT(*) FROM notes`
+            `SELECT COUNT(*) FROM notes
+            where title ilike $1`, [`%${search}%`]
         );
 
         const totalNotes = Number(resultCount.rows[0].count);
