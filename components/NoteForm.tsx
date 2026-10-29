@@ -67,8 +67,8 @@ export default function NoteForm() {
           });
           const data: NoteResponse = await response.json();
 
-          if (!response.ok) {
-            throw new Error(data.message || "Failed to fetch notes");
+          if (!response.ok || !data.success) {
+            throw new Error(data.success ? "Failed to fetch notes" : data.message);
           }
           setNotes(data.notes || []);
           setTotalPages(data.pagination.totalPages)
