@@ -14,6 +14,7 @@ export default function NoteForm() {
 
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [search, setSearch] = useState<string>("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,31 +47,44 @@ export default function NoteForm() {
   };
 
   useEffect(() => {
-    async function fetchNotes() {
-      try {
-        setLoading(true);
-        setError("");
+    const timeoutId = setTimeout(() => {
+      async function fetchNotes() {
 
-        const response = await fetch(`/api/notes?pages=${page}&limit=1`);
-        const data: NoteResponse = await response.json();
+        try {
+          setLoading(true);
+          setError("");
 
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch notes");
+          const params = new URLSearchParams({
+            page: String(page),
+            limit: "10",
+            search,
+          })
+
+          const response = await fetch(`/api/notes?${params}`);
+          const data: NoteResponse = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Failed to fetch notes");
+          }
+          setNotes(data.notes || []);
+          setTotalPages(data.pagination.totalPages)
+
+        } catch (error) {
+          setError(
+            error instanceof Error ? error.message : "something went wrong"
+          )
+        } finally {
+          setLoading(false);
         }
-        setNotes(data.notes || []);
 
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "something went wrong"
-        )
-      } finally {
-        setLoading(false);
       }
 
-    }
+      fetchNotes();
+    }, 400)
 
-    fetchNotes();
-  }, []);
+    return () => clearTimeout(timeoutId);
+
+  }, [page, search]);
 
   return (
     <div>
@@ -96,6 +110,17 @@ export default function NoteForm() {
       </form>
 
       <section>
+        <div>
+          <input
+            type="search"
+            value={search}
+            placeholder="Search notes by title..."
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
 
         {loading && <p>Loading notes...</p>}
         {error && <p>{error}</p>}
