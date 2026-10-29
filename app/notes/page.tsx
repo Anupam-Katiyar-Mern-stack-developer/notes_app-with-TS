@@ -1,17 +1,12 @@
-import { addNote } from "./actions";
+import NoteForm from "@/components/NoteForm";
 
-export default function Notepage() {
-    return (
-        <main>
-            <h1>Create Note</h1>
 
-            <form action={addNote}>
-                <input type="text" name="title" placeholder="Enter title" className="border p-1" aria-required />
-                <textarea name="content" id=""
-                    placeholder="Enter content" />
 
-                <button type="submit">Save Notes</button>
-            </form>
-        </main>
-    )
+export default function NotesPage() {
+  return (
+    <main>
+      <h1>Create Note</h1>
+      <NoteForm />
+    </main>
+  );
 }

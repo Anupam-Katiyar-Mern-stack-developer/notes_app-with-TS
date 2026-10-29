@@ -1,10 +1,19 @@
 "use server";
+
 import { createNote } from "@/services/notes.service";
 import { revalidatePath } from "next/cache";
 
-export async function addNote(formdata: FormData) {
-    const title = formdata.get("title");
-    const content = formdata.get("content");
+export type ActionState = {
+    success: boolean;
+    message: string;
+};
+
+export async function addNote(
+    _prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const title = formData.get("title");
+    const content = formData.get("content");
 
     if (
         typeof title !== "string" ||
@@ -18,11 +27,18 @@ export async function addNote(formdata: FormData) {
         };
     }
 
-    await createNote(title.trim(), content.trim())
-    revalidatePath("notes");
+    try {
+        await createNote(title.trim(), content.trim());
+        revalidatePath("/notes");
 
-    return {
-        success: true,
-        message: "Note created successfully",
+        return {
+            success: true,
+            message: "Note created successfully",
+        };
+    } catch {
+        return {
+            success: false,
+            message: "Failed to create note",
+        };
     }
 }
