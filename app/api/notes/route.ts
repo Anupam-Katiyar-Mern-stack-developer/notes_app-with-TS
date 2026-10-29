@@ -12,7 +12,7 @@ export async function GET(request: Response) {
 
         return Response.json({
             success: true,
-            result: notes.data,
+            notes: notes.data,
             pagination: notes.data
         })
 
