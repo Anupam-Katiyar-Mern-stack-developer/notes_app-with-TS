@@ -8,10 +8,12 @@ export async function GET(request: Response) {
         const limit = Number(searchParams.get("limit") ?? 10);
         const page = Number(searchParams.get("page") ?? 1);
 
-        const notes = await getNotes(search, limit, page)
+        const notes = await getNotes(search, limit, page);
+
         return Response.json({
             success: true,
-            notes,
+            result: notes.data,
+            pagination: notes.data
         })
 
     } catch (error) {
@@ -23,7 +25,6 @@ export async function GET(request: Response) {
 
 
 }
-
 export async function POST(request: Response) {
     try {
         const body = await request.json();
