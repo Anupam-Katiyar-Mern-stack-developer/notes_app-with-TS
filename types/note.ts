@@ -22,3 +22,22 @@ export interface CreateNoteResponse {
   message: string;
   note?: Note;
 }
+
+export interface NoteSuccessResponse {
+  success: true;
+  notes: Note[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalNotes: number;
+    totalPages: number;
+  };
+}
+
+export interface NotesErrorResponse {
+  success: false;
+  message: string;
+}
+
+export type NotesResponse = | NoteSuccessResponse
+  | NotesErrorResponse;
