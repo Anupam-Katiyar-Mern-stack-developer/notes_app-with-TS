@@ -47,6 +47,8 @@ export default function NoteForm() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const timeoutId = setTimeout(() => {
       async function fetchNotes() {
 
@@ -60,7 +62,9 @@ export default function NoteForm() {
             search,
           })
 
-          const response = await fetch(`/api/notes?${params}`);
+          const response = await fetch(`/api/notes?${params}`, {
+            signal: controller.signal
+          });
           const data: NoteResponse = await response.json();
 
           if (!response.ok) {
@@ -74,7 +78,9 @@ export default function NoteForm() {
             error instanceof Error ? error.message : "something went wrong"
           )
         } finally {
-          setLoading(false);
+          if (!controller.signal.aborted) {
+            setLoading(false);
+          }
         }
 
       }
@@ -82,7 +88,10 @@ export default function NoteForm() {
       fetchNotes();
     }, 400)
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    }
 
   }, [page, search]);
 
