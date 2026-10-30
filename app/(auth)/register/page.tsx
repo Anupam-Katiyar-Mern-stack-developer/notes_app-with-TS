@@ -1,7 +1,23 @@
+"use client";
 
 import Link from "next/link";
+import { useActionState } from "react";
+import { signIn } from "next-auth/react";
+import { registerUser } from "./actions";
 
-export default function RegisterPage() {
+type RegisterState = {
+    error: string;
+}
+
+export default function RegisterPage(_prevState: RegisterState,
+    formData: FormData
+) {
+
+    const [state, formAction, pending] = useActionState(
+        registerUser,
+        { error: "" }
+    );
+
     return (
         <main className="min-h-screen grid md:grid-cols-2 bg-white">
 
@@ -78,7 +94,9 @@ export default function RegisterPage() {
 
                     {/* Social Register */}
                     <div className="grid grid-cols-2 gap-3">
-                        <button type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
+                        <button onClick={() => signIn("google", {
+                            redirectTo: "/dashboard"
+                        })} type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
                             <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
                                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
                                 <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.77 46.98 24.55Z" />
@@ -88,7 +106,9 @@ export default function RegisterPage() {
                             Google
                         </button>
 
-                        <button type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
+                        <button onClick={() => signIn("facebook", {
+                            redirectTo: "/dashboard"
+                        })} type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
                             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
                                 <path fill="#1877F2" d="M24 12a12 12 0 1 0-13.875 11.85v-8.38H7.08V12h3.045V9.35c0-3 1.79-4.66 4.52-4.66 1.31 0 2.68.23 2.68.23v2.95h-1.51c-1.49 0-1.95.92-1.95 1.86V12h3.32l-.53 3.47h-2.79v8.38A12 12 0 0 0 24 12Z" />
                             </svg>
@@ -103,11 +123,12 @@ export default function RegisterPage() {
                     </div>
 
                     {/* Register Form */}
-                    <form className="space-y-4">
+                    <form action={formAction} className="space-y-4">
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-slate-700">Full name</label>
                             <input
                                 type="text"
+                                name="name"
                                 placeholder="Enter your full name"
                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                             />
@@ -117,6 +138,7 @@ export default function RegisterPage() {
                             <label className="mb-2 block text-sm font-semibold text-slate-700">Email address</label>
                             <input
                                 type="email"
+                                name="email"
                                 placeholder="name@example.com"
                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                             />
@@ -126,6 +148,7 @@ export default function RegisterPage() {
                             <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
                             <input
                                 type="password"
+                                name="password"
                                 placeholder="Create a password"
                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                             />
@@ -135,18 +158,29 @@ export default function RegisterPage() {
                             <label className="mb-2 block text-sm font-semibold text-slate-700">Confirm password</label>
                             <input
                                 type="password"
+                                name="confirmPassword"
                                 placeholder="Confirm your password"
                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                             />
                         </div>
 
                         <label className="flex items-start gap-2 pt-1 text-sm text-slate-500">
-                            <input type="checkbox" className="mt-1 h-4 w-4 accent-blue-600" />
+                            <input type="checkbox"
+                                name="terms" className="mt-1 h-4 w-4 accent-blue-600" />
                             <span>I agree to the <Link href="/terms" className="font-semibold text-blue-600">Terms</Link> and <Link href="/privacy" className="font-semibold text-blue-600">Privacy Policy</Link>.</span>
                         </label>
+                        {state.error && (
+                            <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+                                {state.error}
+                            </p>
+                        )}
 
-                        <button type="submit" className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.99]">
-                            Create account
+                        <button
+                            type="submit"
+                            disabled={pending}
+                            className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {pending ? "Creating account..." : "Create account"}
                         </button>
                     </form>
 
