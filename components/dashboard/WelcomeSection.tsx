@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Plus, Sparkles } from "lucide-react";
 
-export default function WelcomeSection() {
+export default function WelcomeSection({name}) {
   return (
     <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white shadow-sm sm:p-8 lg:p-10">
       <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
@@ -16,7 +16,7 @@ export default function WelcomeSection() {
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-            Welcome back!
+            Welcome <span className="text-yellow-300">{name}</span> 
           </h1>
 
           <p className="mt-3 max-w-md text-sm leading-6 text-blue-100 sm:text-base">
