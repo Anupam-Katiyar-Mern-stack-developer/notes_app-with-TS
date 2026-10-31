@@ -1,6 +1,9 @@
 
 "use server";
 
+import { pool } from "@/lib/db";
+import bcrypt from "bcryptjs";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -36,11 +39,39 @@ export async function loginAction(
 
   const { email, password } = validatedFields.data;
 
-  // Next step: verify credentials from PostgreSQL.
-  console.log(email, password);
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email, password
+       FROM users
+       WHERE email = $1`,
+      [email]
+    );
 
-  return {
-    success: false,
-    message: "Login authentication is not implemented yet.",
-  };
+    const user = result.rows[0];
+
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found. Please sign up.",
+      };
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return {
+        success: false,
+        message: "Invalid email or password.",
+      };
+    }
+  } catch (error) {
+    console.error("Login database error:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong. Please try again.",
+    };
+  }
+
+  redirect("/dashboard");
 }
