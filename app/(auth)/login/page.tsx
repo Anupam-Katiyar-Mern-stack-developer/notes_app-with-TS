@@ -1,7 +1,21 @@
+"use client";
 
 import Link from "next/link";
 
+import { useActionState } from "react";
+import { loginAction, type LoginState } from "./actions";
+
+
+const initialState: LoginState = {
+  success: false,
+  message: "",
+}
 export default function LoginPage() {
+
+  const [state, formAction, isPending] = useActionState(
+    loginAction,
+    initialState,
+  )
   return (
     <main className="min-h-screen grid md:grid-cols-2 bg-white">
 
@@ -84,17 +98,17 @@ export default function LoginPage() {
 
             <button type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300">
               <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
-                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"/>
-                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.77 46.98 24.55Z"/>
-                <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z"/>
-                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"/>
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.77 46.98 24.55Z" />
+                <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z" />
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z" />
               </svg>
               Google
             </button>
 
             <button type="button" className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300">
               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-                <path fill="#1877F2" d="M24 12a12 12 0 1 0-13.875 11.85v-8.38H7.08V12h3.045V9.35c0-3 1.79-4.66 4.52-4.66 1.31 0 2.68.23 2.68.23v2.95h-1.51c-1.49 0-1.95.92-1.95 1.86V12h3.32l-.53 3.47h-2.79v8.38A12 12 0 0 0 24 12Z"/>
+                <path fill="#1877F2" d="M24 12a12 12 0 1 0-13.875 11.85v-8.38H7.08V12h3.045V9.35c0-3 1.79-4.66 4.52-4.66 1.31 0 2.68.23 2.68.23v2.95h-1.51c-1.49 0-1.95.92-1.95 1.86V12h3.32l-.53 3.47h-2.79v8.38A12 12 0 0 0 24 12Z" />
               </svg>
               Facebook
             </button>
@@ -106,37 +120,65 @@ export default function LoginPage() {
             <div className="h-px flex-1 bg-slate-200" />
           </div>
 
-          <form className="space-y-5">
+          <form action={formAction} className="space-y-5">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Email address</label>
+              <label htmlFor="email" className="mb-2 block text-sm font-medium">
+                Email address
+              </label>
               <input
+                id="email"
+                name="email"
                 type="email"
-                placeholder="name@example.com"
-                className="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                autoComplete="email"
+                placeholder="you@example.com"
+                required
+                aria-invalid={!!state.errors?.email?.length}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
+              {state.errors?.email?.[0] && (
+                <p className="mt-1 text-sm text-red-500">
+                  {state.errors.email[0]}
+                </p>
+              )}
             </div>
 
             <div>
-              <div className="mb-2 flex justify-between">
-                <label className="text-sm font-semibold text-slate-700">Password</label>
-                <Link href="/forgot-password" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
-                  Forgot password?
-                </Link>
-              </div>
+              <label htmlFor="password" className="mb-2 block text-sm font-medium">
+                Password
+              </label>
               <input
+                id="password"
+                name="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="Enter your password"
-                className="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                required
+                aria-invalid={!!state.errors?.password?.length}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
+              {state.errors?.password?.[0] && (
+                <p className="mt-1 text-sm text-red-500">
+                  {state.errors.password[0]}
+                </p>
+              )}
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-slate-600">
-              <input type="checkbox" className="h-4 w-4 accent-blue-600" />
-              Remember me
-            </label>
+            {state.message && (
+              <p
+                role="status"
+                className={`text-sm ${state.success ? "text-green-600" : "text-red-500"
+                  }`}
+              >
+                {state.message}
+              </p>
+            )}
 
-            <button type="submit" className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.99]">
-              Sign in
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isPending ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
