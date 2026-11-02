@@ -1,51 +1,53 @@
+
+import "server-only";
 import { pool } from "@/lib/db";
 
 export async function getNotes(
-    search: string,
-    limit: number, page: number
+  search: string,
+  limit: number,
+  page: number
 ) {
+  const offset = (page - 1) * limit;
+  const searchTerm = `%${search}%`;
 
-    const offset = (page - 1) * limit;
+  const result = await pool.query(
+    `SELECT id, title, content, created_at
+     FROM notes
+     WHERE title ILIKE $3
+     ORDER BY created_at DESC, id DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset, searchTerm]
+  );
 
-    const result = await pool.query(
-        `select id ,title,content,created_at
-        from notes 
-        where title ilike $3
-        order by created_at desc,id desc
-        limit $1 offset $2`, [limit, offset, `%${search}%`]
-    );
+  const resultCount = await pool.query(
+    `SELECT COUNT(*) FROM notes WHERE title ILIKE $1`,
+    [searchTerm]
+  );
 
-    const resultCount = await pool.query(
-        `
-        select count(*) from notes
-        where title ilike $1
-        `, [search]
-    );
+  const totalCount = Number(resultCount.rows[0].count);
+  const totalPages = Math.ceil(totalCount / limit);
 
-    const pages = Number(resultCount.rows);
-
-    const totalPages = (pages / limit)
-
-    return {
-        data: result.rows,
-        pagination: {
-            totalPages,
-            page,
-            limit,
-        }
-    }
+  return {
+    data: result.rows,
+    pagination: {
+      totalCount,
+      totalPages,
+      page,
+      limit,
+    },
+  };
 }
 
-
 export async function createNote(
-    title: string,
-    content: string
+  title: string,
+  content: string
 ) {
-    const result = await pool.query(
-        `insert into notes (title,content)
-        values($1,$2)
-        returning id,title,content,created_at
-        `, [title, content]
-    )
-    return result.rows[0];
+  const result = await pool.query(
+    `INSERT INTO notes (title, content)
+     VALUES ($1, $2)
+     RETURNING id, title, content, created_at`,
+    [title, content]
+  );
+
+  return result.rows[0];
 }

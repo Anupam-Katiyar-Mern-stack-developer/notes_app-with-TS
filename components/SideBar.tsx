@@ -2,6 +2,8 @@
 "use client";
 
 import Link from "next/link";
+import { logoutAction } from "@/app/(auth)/login/actions";
+import { LogOut } from "lucide-react";
 
 type SidebarProps = {
   open: boolean;
@@ -22,21 +24,20 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         type="button"
         aria-label="Close navigation"
         onClick={onClose}
-        className={`fixed inset-0 z-40 bg-slate-950/40 transition-opacity duration-300 md:hidden ${
-          open
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        }`}
+        className={`fixed inset-0 z-40 bg-slate-950/40 transition-opacity duration-300 md:hidden ${open
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0"
+          }`}
       />
+
 
       {/* Sidebar panel */}
       <aside
         id="app-sidebar"
         aria-label="Main navigation"
         aria-hidden={!open}
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-slate-200 bg-white p-5 shadow-xl transition-transform duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:h-screen md:w-64 md:max-w-none md:translate-x-0 md:shadow-none ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-slate-200 bg-white p-5 shadow-xl transition-transform duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:h-screen md:w-64 md:max-w-none md:translate-x-0 md:shadow-none ${open ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="mb-10 flex items-center justify-between">
           <Link href="/" onClick={onClose} className="flex items-center gap-3">
@@ -89,12 +90,17 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         </nav>
 
         <div className="mt-auto rounded-xl bg-slate-50 p-4">
-          <p className="text-sm font-semibold text-slate-800">
-            Stay organized
-          </p>
-          <p className="mt-1 text-xs leading-5 text-slate-500">
-            Keep your ideas and thoughts in one place.
-          </p>
+          <form action={logoutAction} className="mt-4">
+            <button
+              type="submit"
+              onClick={onClose}
+              className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
+          </form>
+        
         </div>
       </aside>
     </>

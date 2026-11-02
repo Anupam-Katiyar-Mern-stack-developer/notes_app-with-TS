@@ -111,3 +111,22 @@ export async function loginAction(
     redirect("/dashboard");
 }
 
+
+
+export async function logoutAction() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("session")?.value;
+
+    if (token) {
+        const tokenHash = createHash("sha256")
+            .update(token)
+            .digest("hex");
+
+        await pool.query(
+            "delete from sessions where token_hash =$1", [tokenHash]
+        );
+    }
+    cookieStore.delete("session");
+    redirect("/login")
+
+}
