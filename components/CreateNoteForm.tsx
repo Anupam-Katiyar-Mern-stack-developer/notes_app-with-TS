@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, Save } from "lucide-react";
+import { createNoteAction } from "@/app/(dashboard)/notes/new/actions";
 
 export default function CreateNoteForm() {
     return (
@@ -22,7 +23,7 @@ export default function CreateNoteForm() {
                 </p>
             </div>
 
-            <form className="space-y-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
+            <form action={createNoteAction} className="space-y-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
                 <div>
                     <label
                         htmlFor="title"
