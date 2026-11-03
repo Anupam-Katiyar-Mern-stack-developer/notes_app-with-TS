@@ -1,29 +1,31 @@
 import "server-only";
-
 import { pool } from "@/lib/db";
 
-
 export async function getDashboardData() {
-    const [totalNotesResult, recentResult] = await Promise.all([
-        pool.query(
-            `
-            select Count(*) as total_notes
-            from notes
-            `
-        ),
+  const [totalNotesResult, recentNotesResult, recentCountResult] =
+    await Promise.all([
+      pool.query(`
+        SELECT COUNT(*) AS total_notes
+        FROM notes
+      `),
 
-        pool.query(
-            `
-            select id ,title,content,created_at
-            from notes
-            order by created_at desc ,id desc
-            limit 5
-            `
-        ),
+      pool.query(`
+        SELECT id, title, content, created_at
+        FROM notes
+        ORDER BY created_at DESC, id DESC
+        LIMIT 5
+      `),
+
+      pool.query(`
+        SELECT COUNT(*) AS recent_notes
+        FROM notes
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+      `),
     ]);
 
-    return {
-        totalNotesResult: Number(totalNotesResult.rows[0].total_notes),
-        recentResult: recentResult.rows,
-    }
+  return {
+    totalNotes: Number(totalNotesResult.rows[0].total_notes),
+    recentNotes: recentNotesResult.rows,
+    recentNotesCount: Number(recentCountResult.rows[0].recent_notes),
+  };
 }

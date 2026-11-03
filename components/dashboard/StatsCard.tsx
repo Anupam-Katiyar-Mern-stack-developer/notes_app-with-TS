@@ -1,37 +1,40 @@
-
 import { FileText, Heart, Clock, TrendingUp } from "lucide-react";
 
-const stats = [
-  {
-    title: "Total Notes",
-    value: "24",
-    subtitle: "All your saved notes",
-    icon: FileText,
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-600",
-    trend: "+12%",
-  },
-  {
-    title: "Favorites",
-    value: "08",
-    subtitle: "Your important notes",
-    icon: Heart,
-    iconBg: "bg-rose-50",
-    iconColor: "text-rose-600",
-    trend: "+2",
-  },
-  {
-    title: "Recent Notes",
-    value: "12",
-    subtitle: "Updated this week",
-    icon: Clock,
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-600",
-    trend: "This week",
-  },
-];
+type StatsCardsProps = {
+  totalNotes: number;
+};
 
-export default function StatsCards() {
+export default function StatsCards({ totalNotes }: StatsCardsProps) {
+  const stats = [
+    {
+      title: "Total Notes",
+      value: totalNotes,
+      subtitle: "All your saved notes",
+      icon: FileText,
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-600",
+      trend: "All time",
+    },
+    {
+      title: "Favorites",
+      value: 0,
+      subtitle: "Your important notes",
+      icon: Heart,
+      iconBg: "bg-rose-50",
+      iconColor: "text-rose-600",
+      trend: "Coming soon",
+    },
+    {
+      title: "Recent Notes",
+      value: 0,
+      subtitle: "Updated this week",
+      icon: Clock,
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-600",
+      trend: "This week",
+    },
+  ];
+
   return (
     <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {stats.map((stat) => {
