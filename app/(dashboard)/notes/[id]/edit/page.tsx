@@ -12,7 +12,6 @@ export default async function EditNotePage({
   params,
 }: EditNotePageProps) {
   const { id } = await params;
-
   const noteId = Number(id);
 
   if (!Number.isInteger(noteId) || noteId <= 0) {
@@ -20,6 +19,8 @@ export default async function EditNotePage({
   }
 
   const note = await getNoteById(noteId);
+
+  console.log("EDIT NOTE DATA:", note);
 
   if (!note) {
     notFound();
