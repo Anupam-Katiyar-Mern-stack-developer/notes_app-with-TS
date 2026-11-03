@@ -51,3 +51,15 @@ export async function createNote(
 
   return result.rows[0];
 }
+
+export async function getNoteById(id: number) {
+  const result = await pool.query(
+    `SELECT id, title, content, created_at
+     FROM notes
+     WHERE id = $1
+     LIMIT 1`,
+    [id]
+  );
+
+  return result.rows[0] ?? null;
+}
