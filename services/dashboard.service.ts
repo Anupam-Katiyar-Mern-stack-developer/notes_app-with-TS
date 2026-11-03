@@ -13,13 +13,13 @@ export async function getDashboardData() {
         SELECT id, title, content, created_at
         FROM notes
         ORDER BY created_at DESC, id DESC
-        LIMIT 5
+        LIMIT 4
       `),
 
       pool.query(`
         SELECT COUNT(*) AS recent_notes
         FROM notes
-        WHERE created_at >= NOW() - INTERVAL '7 days'
+        WHERE created_at >= NOW() - INTERVAL '2 days'
       `),
     ]);
 
