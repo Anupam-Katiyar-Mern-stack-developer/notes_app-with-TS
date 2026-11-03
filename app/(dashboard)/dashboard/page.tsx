@@ -18,8 +18,11 @@ export default async function DashboardPage() {
 
     return (
         <div className="mx-auto w-full max-w-7xl space-y-8">
-            <WelcomeSection name={user.name}/>
-           <StatsCards totalNotes={dashboardData.totalNotes} />
+            <WelcomeSection name={user.name} />
+            <StatsCards
+                totalNotes={dashboardData.totalNotes}
+                recentNotesCount={dashboardData.recentNotesCount}
+            />
             <RecentNotes notes={dashboardData.recentNotes} />
             <QuickActions />
         </div>
