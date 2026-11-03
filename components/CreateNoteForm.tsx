@@ -18,6 +18,7 @@ export default function CreateNoteForm({
     initialData,
 }: CreateNoteFormProps) {
     const isEdit = mode === "edit";
+    
 
     return (
         <div className="mx-auto w-full max-w-3xl">
