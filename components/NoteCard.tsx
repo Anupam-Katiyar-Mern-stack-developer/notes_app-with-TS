@@ -1,5 +1,6 @@
 
 import { FileText, Heart, MoreVertical } from "lucide-react";
+import NoteActions from "./NoteActions";
 
 type NoteCardProps = {
   note: {
@@ -32,7 +33,7 @@ export default function NoteCard({ note }: NoteCardProps) {
             aria-label="More options"
             className="rounded-lg p-2 transition hover:bg-slate-100"
           >
-            <MoreVertical size={18} />
+            <NoteActions noteId={note.id} />
           </button>
         </div>
       </div>

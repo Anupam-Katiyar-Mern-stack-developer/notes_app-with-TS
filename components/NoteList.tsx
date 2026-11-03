@@ -1,7 +1,4 @@
 
-
-
-
 import NoteCard from "./NoteCard";
 
 type Note = {
