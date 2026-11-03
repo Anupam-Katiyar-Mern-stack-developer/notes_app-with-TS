@@ -1,8 +1,24 @@
-import Link from "next/link";
-import { ArrowLeft, FileText, Save } from "lucide-react";
-import { createNoteAction } from "@/app/(dashboard)/notes/new/actions";
 
-export default function CreateNoteForm() {
+import Link from "next/link";
+import { ArrowLeft, Save } from "lucide-react";
+import { createNoteAction } from "@/app/(dashboard)/notes/new/actions";
+import { updateNoteAction } from "@/app/(dashboard)/notes/[id]/edit/actions";
+
+type CreateNoteFormProps = {
+    mode?: "create" | "edit";
+    initialData?: {
+        id: number;
+        title: string;
+        content: string;
+    };
+};
+
+export default function CreateNoteForm({
+    mode = "create",
+    initialData,
+}: CreateNoteFormProps) {
+    const isEdit = mode === "edit";
+
     return (
         <div className="mx-auto w-full max-w-3xl">
             <div className="mb-8">
@@ -15,15 +31,24 @@ export default function CreateNoteForm() {
                 </Link>
 
                 <h1 className="mt-5 text-2xl font-bold text-gray-900 sm:text-3xl">
-                    Create New Note
+                    {isEdit ? "Edit Note" : "Create New Note"}
                 </h1>
 
                 <p className="mt-2 text-sm text-gray-500">
-                    Capture your thoughts, ideas and important information.
+                    {isEdit
+                        ? "Update your note details."
+                        : "Capture your thoughts, ideas and important information."}
                 </p>
             </div>
 
-            <form action={createNoteAction} className="space-y-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
+            <form
+                action={isEdit ? updateNoteAction : createNoteAction}
+                className="space-y-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8"
+            >
+                {isEdit && (
+                    <input type="hidden" name="id" value={initialData?.id} />
+                )}
+
                 <div>
                     <label
                         htmlFor="title"
@@ -36,6 +61,7 @@ export default function CreateNoteForm() {
                         type="text"
                         id="title"
                         name="title"
+                        defaultValue={initialData?.title || ""}
                         placeholder="Enter your note title..."
                         required
                         maxLength={200}
@@ -54,6 +80,7 @@ export default function CreateNoteForm() {
                     <textarea
                         id="content"
                         name="content"
+                        defaultValue={initialData?.content || ""}
                         rows={10}
                         placeholder="Write your thoughts here..."
                         required
@@ -74,7 +101,7 @@ export default function CreateNoteForm() {
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700"
                     >
                         <Save size={17} />
-                        Save Note
+                        {isEdit ? "Update Note" : "Save Note"}
                     </button>
                 </div>
             </form>
