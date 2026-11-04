@@ -1,5 +1,5 @@
 
-import { FileText, Heart, MoreVertical } from "lucide-react";
+import { FileText, Heart } from "lucide-react";
 import NoteActions from "./NoteActions";
 
 type NoteCardProps = {
@@ -28,13 +28,7 @@ export default function NoteCard({ note }: NoteCardProps) {
             <Heart size={18} />
           </button>
 
-          <button
-            type="button"
-            aria-label="More options"
-            className="rounded-lg p-2 transition hover:bg-slate-100"
-          >
-            <NoteActions noteId={note.id} />
-          </button>
+          <NoteActions noteId={note.id} />
         </div>
       </div>
 

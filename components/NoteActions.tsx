@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { deleteNoteAction } from "@/app/(dashboard)/notes/actions";
 
 type NoteActionsProps = {
   noteId: number;
@@ -41,17 +42,17 @@ export default function NoteActions({ noteId }: NoteActionsProps) {
               Edit
             </Link>
 
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                // Delete action next step mein connect karenge.
-              }}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 transition hover:bg-red-50"
-            >
-              <Trash2 size={16} />
-              Delete
-            </button>
+            <form action={deleteNoteAction}>
+              <input type="hidden" name="id" value={noteId} />
+
+              <button
+                type="submit"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </form>
           </div>
         </>
       )}

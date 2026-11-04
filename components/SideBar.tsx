@@ -11,8 +11,8 @@ type SidebarProps = {
 };
 
 const navigation = [
-  { label: "All Notes", href: "/notes", icon: "▤" },
-  { label: "Favorites", href: "/favorites", icon: "☆" },
+  { label: "dashboard", href: "/dashboard", icon: "▤" },
+  { label: "all notes", href: "/notes", icon: "☆" },
   { label: "Recently Deleted", href: "/trash", icon: "⌫" },
 ];
 
