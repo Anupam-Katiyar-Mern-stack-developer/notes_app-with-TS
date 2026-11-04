@@ -67,3 +67,16 @@ export async function getNoteById(id: number) {
 
   return result.rows[0] ?? null;
 }
+
+
+
+export async function getDeletedNotes() {
+  const result = await pool.query(
+    `SELECT id, title, content, created_at, deleted_at
+     FROM notes
+     WHERE deleted_at IS NOT NULL
+     ORDER BY deleted_at DESC, id DESC`
+  );
+
+  return result.rows;
+}
