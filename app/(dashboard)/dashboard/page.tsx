@@ -22,6 +22,7 @@ export default async function DashboardPage() {
             <StatsCards
                 totalNotes={dashboardData.totalNotes}
                 recentNotesCount={dashboardData.recentNotesCount}
+                favourateCount={dashboardData.favoriteNotesCount}
             />
             <RecentNotes notes={dashboardData.recentNotes} />
             <QuickActions />

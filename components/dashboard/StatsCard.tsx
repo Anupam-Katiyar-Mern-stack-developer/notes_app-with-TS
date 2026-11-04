@@ -3,11 +3,13 @@ import { FileText, Heart, Clock, TrendingUp } from "lucide-react";
 type StatsCardsProps = {
   totalNotes: number;
   recentNotesCount: number;
+  favourateCount:number;
 };
 
 export default function StatsCards({
   totalNotes,
   recentNotesCount,
+  favourateCount,
 }: StatsCardsProps) {
   const stats = [
     {
@@ -21,7 +23,7 @@ export default function StatsCards({
     },
     {
       title: "Favorites",
-      value: 0,
+      value: favourateCount ,
       subtitle: "Your important notes",
       icon: Heart,
       iconBg: "bg-rose-50",

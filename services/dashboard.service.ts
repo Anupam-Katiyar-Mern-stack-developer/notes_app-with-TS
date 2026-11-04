@@ -8,6 +8,7 @@ export async function getDashboardData() {
     recentNotesResult,
     recentCountResult,
     deletedNotesResult,
+    favoriteNotesResult,
   ] = await Promise.all([
     // Total active notes
     pool.query(`
@@ -18,7 +19,7 @@ export async function getDashboardData() {
 
     // Latest 4 active notes
     pool.query(`
-      SELECT id, title, content, created_at
+      SELECT id, title, content, created_at, is_favorite
       FROM notes
       WHERE deleted_at IS NULL
       ORDER BY created_at DESC, id DESC
@@ -39,15 +40,21 @@ export async function getDashboardData() {
       FROM notes
       WHERE deleted_at IS NOT NULL
     `),
+
+    // Total favorite active notes
+    pool.query(`
+      SELECT COUNT(*) AS favorite_notes
+      FROM notes
+      WHERE is_favorite = TRUE
+      AND deleted_at IS NULL
+    `),
   ]);
 
   return {
     totalNotes: Number(totalNotesResult.rows[0].total_notes),
-
     recentNotes: recentNotesResult.rows,
-
     recentNotesCount: Number(recentCountResult.rows[0].recent_notes),
-
     deletedNotesCount: Number(deletedNotesResult.rows[0].deleted_notes),
+    favoriteNotesCount: Number(favoriteNotesResult.rows[0].favorite_notes),
   };
 }
