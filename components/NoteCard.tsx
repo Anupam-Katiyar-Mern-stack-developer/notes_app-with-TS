@@ -1,6 +1,6 @@
-
-import { FileText, Heart } from "lucide-react";
+import { FileText } from "lucide-react";
 import NoteActions from "./NoteActions";
+import FavoriteButton from "./FavoriteButton";
 
 type NoteCardProps = {
   note: {
@@ -8,6 +8,7 @@ type NoteCardProps = {
     title: string;
     content: string;
     created_at: string;
+    is_favorite: boolean;
   };
 };
 
@@ -20,13 +21,10 @@ export default function NoteCard({ note }: NoteCardProps) {
         </div>
 
         <div className="flex gap-2 text-slate-400">
-          <button
-            type="button"
-            aria-label="Add to favorites"
-            className="rounded-lg p-2 transition hover:bg-rose-50 hover:text-rose-500"
-          >
-            <Heart size={18} />
-          </button>
+          <FavoriteButton
+            noteId={note.id}
+            isFavorite={note.is_favorite}
+          />
 
           <NoteActions noteId={note.id} />
         </div>

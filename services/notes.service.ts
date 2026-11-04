@@ -11,12 +11,17 @@ export async function getNotes(
   const searchTerm = `%${search}%`;
 
   const result = await pool.query(
-    `SELECT id, title, content, created_at
+    `SELECT
+  id,
+  title,
+  content,
+  created_at,
+  is_favorite
 FROM notes
 WHERE deleted_at IS NULL
 AND title ILIKE $3
 ORDER BY created_at DESC, id DESC
-LIMIT $1 OFFSET $2`,
+LIMIT $1 OFFSET $2;`,
     [limit, offset, searchTerm]
   );
 
