@@ -12,15 +12,19 @@ export async function getNotes(
 
   const result = await pool.query(
     `SELECT id, title, content, created_at
-     FROM notes
-     WHERE title ILIKE $3
-     ORDER BY created_at DESC, id DESC
-     LIMIT $1 OFFSET $2`,
+FROM notes
+WHERE deleted_at IS NULL
+AND title ILIKE $3
+ORDER BY created_at DESC, id DESC
+LIMIT $1 OFFSET $2`,
     [limit, offset, searchTerm]
   );
 
   const resultCount = await pool.query(
-    `SELECT COUNT(*) FROM notes WHERE title ILIKE $1`,
+    `SELECT COUNT(*)
+FROM notes
+WHERE deleted_at IS NULL
+AND title ILIKE $1;`,
     [searchTerm]
   );
 
